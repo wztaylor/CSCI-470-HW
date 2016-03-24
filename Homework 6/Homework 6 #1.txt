@@ -1,0 +1,53 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sorts
+
+#class = {book,children_book,aviBook}.
+#object = {strangeHappenings,catAndTheHat,jungleBook}.
+#default1 = d1(#object).
+
+#default = #default1.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+predicates
+
+is_subclass(#class,#class).
+subclass(#class,#class).
+is_a(#object,#class).
+member(#object,#class).
+ab(#default).
+creepy(#object).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+rules
+
+is_subclass(aviBook,children_book).
+is_subclass(children_book,book).
+
+
+%% Class C1 is a subclass of class C2 if C1 is a subclass of C2 or
+%% if C1 is a subclass of C3 which is a subclass of C2.
+subclass(C1,C2) :- is_subclass(C1,C2).
+subclass(C1,C2) :- is_subclass(C1,C3),
+                   subclass(C3,C2).
+
+is_a(strangeHappenings,aviBook).
+is_a(catAndTheHat,children_book).
+is_a(jungleBook,children_book).
+
+
+%% Object X is a member of class C if X is a C or if X is a C0
+%% and C0 is a subclass of C.
+member(X,C) :- is_a(X,C).
+member(X,C) :- is_a(X,C0),
+               subclass(C0,C).
+
+
+%% normally childrens books arent creepy
+    -creepy(X) :- is_a(X,children_book),
+            not ab(d1(X)),
+            not creepy(X).
+
+%% books by avi are a weak exception
+    ab(d1(X)) :- not member(X,aviBook).
+
+creepy(strangeHappenings). 

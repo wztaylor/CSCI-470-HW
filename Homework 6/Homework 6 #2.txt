@@ -1,0 +1,39 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sorts
+
+#vertex = {a,b,c,d}.
+#color = {green,purple,gold}.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+predicates
+
+edge(#vertex, #vertex). 
+connected(#vertex, #vertex).
+possibleColor(#vertex,#color).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+rules
+
+% edge(X,Y) -- There is an edge from vertex X to vertex Y.
+% If an edge isn't listed, it doesn't exist.
+% Edges are undirected.
+edge(a,b).
+edge(b,c).
+edge(c,d).
+edge(d,a).
+
+% If theres an edge from X to Y there is also an edge from Y to X
+edge(X,Y) :- edge(Y,X).
+
+possibleColor(X,green) | possibleColor(X,purple) | possibleColor(X,gold).
+
+%no edges can contain same color
+%-possibleColor(X1,C1) :- possibleColor(X2, C1),
+%                    X1 != X2.
+                    
+% no adjecent verticies can contain same color
+-possibleColor(X1,C1) :- possibleColor(X2, C1),
+                        edge(X1,X2).
+
+%%% teacher answer 
+%%% :- edge(X1,X2), possibleColor(X1,C), possibleColor(X2,C).

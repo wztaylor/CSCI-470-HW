@@ -1,0 +1,69 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sorts
+
+#person = {john, sam, bill, alice, bob, dave}.
+#gender = {male, female}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+predicates
+
+father(#person,#person).
+mother(#person,#person).
+gender(#person,#gender).
+parent(#person,#person).
+child(#person,#person).
+brother(#person,#person).
+uncle(#person,#person).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+rules
+
+brother(dave,john).
+
+father(john,sam).
+father(john,bill).
+
+mother(alice,sam).
+mother(alice,bill).
+
+gender(john,male).
+gender(alice,female).
+gender(sam,male).
+gender(bill,male).
+%
+gender(dave,male).
+%
+parent(X,Y) :- father(X,Y).
+parent(X,Y) :- mother(X,Y).
+
+child(X,Y) :- parent(Y,X).
+
+brother(X,Y) :- gender(X,male),
+                father(F,X),
+                father(F,Y),
+                mother(M,X),
+                mother(M,Y),
+                X != Y.
+
+
+brother(X,Y) :- brother(Y,X),
+    X != Y.               
+                
+-father(X,Y) :- gender(X,female).
+
+-father(X,Y) :- father(Z,Y), 
+                X != Z.
+%
+uncle(X,Y) :- gender(X,male),
+              parent(P,Y),
+              brother(X,P),
+              X != Y.
+              
+-uncle(X,Y) :- gender(X,female).
+
+-uncle(X,Y) :- father(X,Y).
+               
+-uncle(X,Y) :- brother(X,Y).
+%  
+
+

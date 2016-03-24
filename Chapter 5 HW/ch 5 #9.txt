@@ -1,0 +1,84 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sorts
+
+#class = {saxophone,selmerVI,spring,highD}.
+#object = {jakesax, mosax, mospring, jakespring, jakekey, mokey}.
+#default1 = d1(#object).
+
+#default = #default1.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+predicates
+
+is_subclass(#class,#class).
+subclass(#class,#class).
+is_a(#object,#class).
+member(#object,#class).
+siblings(#class,#class).
+ab(#default).
+part_of(#object,#object).
+broken(#object).
+works(#object).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+rules
+
+is_subclass(selmerVI,saxophone).
+is_subclass(highD, saxophone).
+is_subclass(spring, highD).
+
+
+%% Class C1 is a subclass of class C2 if C1 is a subclass of C2 or
+%% if C1 is a subclass of C3 which is a subclass of C2.
+subclass(C1,C2) :- is_subclass(C1,C2).
+subclass(C1,C2) :- is_subclass(C1,C3),
+                   subclass(C3,C2).
+
+is_a(mosax,selmerVI).
+is_a(jakesax,selmerVI).
+is_a(jakespring,spring).
+is_a(mospring,spring).
+is_a(jakekey,highD).
+is_a(mokey,highD).
+
+%% Object X is a member of class C if X is a C or if X is a C0
+%% and C0 is a subclass of C.
+member(X,C) :- is_a(X,C).
+member(X,C) :- is_a(X,C0),
+               subclass(C0,C).
+
+ 
+%% Sibling classes are disjoint unless we are specifically told otherwise.
+siblings(C1,C2) :- is_subclass(C1,C),
+                   is_subclass(C2,C),
+                   C1 != C2.
+-member(X,C2) :- member(X,C1),
+                 siblings(C1,C2),
+                 C1 != C2,
+                 not member(X,C2). 
+
+part_of(mokey, mosax).
+part_of(jakekey, jakesax).
+part_of(mospring, mokey).
+part_of(jakespring, jakekey).
+
+part_of(X,Z) :- part_of(X,Y),
+                part_of(Y,Z).
+
+
+broken(mospring).
+
+ %default 1 normally springs are not broken
+-broken(X) :- member(X,spring),
+              not ab(d1(X)),
+              not broken(X).
+ 
+% X is broken if Y is a part of X and Y is broken              
+broken(X) :- part_of(Y,X),
+             broken(Y).
+             
+% X works if Y is a part of X and Y is not broken             
+works(X) :- part_of(Y,X),
+            -broken(Y).
+            
+works(X) :- -broken(X).

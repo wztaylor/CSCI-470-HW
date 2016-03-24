@@ -1,0 +1,40 @@
+#class = {saxophone, selmerVI, spring, highD, key, part_of}
+#object = {mospring, jakespring, mohighD, jakehighD, mosax, jakesax}
+
+is_subclass(selmer,sax).
+is_subclass(highD,key).
+is_subclass(key,sax).
+is_a(jakesax,selmer).
+is_a(mosax,selmer).
+is_a(mospring,spring).
+is_a(jakespring,spring).
+part_of(mospring, mohighD).
+part_of(mohighD, mosax).
+part_of(jakespring, jakehighD).
+part_of(jakehighD, jakesax).
+
+%Transitive closure
+part_of(X,Y) :- part_of(X,Z),
+		part_of(Z,Y).
+
+broken_part(P,T) :- part_of(subP,P),
+		    part_of(P,T),
+		    broken_part(subP,T).
+
+%default
+-broken_part(P, Sax) :- member(P, sax_part),
+			member(Sax, sax),
+			not ab(d1(P,Sax),
+			not broken_part(P,Sax).
+
+broken_part(mospring,mosax).
+
+broken(Thing) :- broken_part(P,Thing).
+
+-broken(Sax) :- member(Sax, sax),
+		not ab(d2(Sax)),
+		not broken(Sax).
+
+%defining broken as only applying to saxophones
+broken(#sax).
+
